@@ -38,7 +38,8 @@ def bypass_suspicious_login(
     if bypass_security_challenge_using == "sms":
         try:
             option = browser.find_element_by_xpath(
-                read_xpath(bypass_suspicious_login.__name__, "bypass_with_sms_option")
+                read_xpath(bypass_suspicious_login.__name__,
+                           "bypass_with_sms_option")
             )
         except NoSuchElementException:
             logger.warn(
@@ -50,7 +51,8 @@ def bypass_suspicious_login(
     if bypass_security_challenge_using == "email":
         try:
             option = browser.find_element_by_xpath(
-                read_xpath(bypass_suspicious_login.__name__, "bypass_with_email_option")
+                read_xpath(bypass_suspicious_login.__name__,
+                           "bypass_with_email_option")
             )
         except NoSuchElementException:
             logger.warn(
@@ -66,9 +68,11 @@ def bypass_suspicious_login(
 
     # click on security code
     send_security_code_button = browser.find_element_by_xpath(
-        read_xpath(bypass_suspicious_login.__name__, "send_security_code_button")
+        read_xpath(bypass_suspicious_login.__name__,
+                   "send_security_code_button")
     )
-    (ActionChains(browser).move_to_element(send_security_code_button).click().perform())
+    (ActionChains(browser).move_to_element(
+        send_security_code_button).click().perform())
 
     # update server calls
     update_activity(browser, state=None)
@@ -90,7 +94,8 @@ def bypass_suspicious_login(
         # update connection state
         security_code = data["challenge"]["security_code"]
     except Exception:
-        logger.info("Security Code not present in {}state.json file".format(logfolder))
+        logger.info(
+            "Security Code not present in {}state.json file".format(logfolder))
 
     if security_code is None:
         security_code = input("Type the security code here: ")
@@ -112,7 +117,8 @@ def bypass_suspicious_login(
         update_activity(browser, state=None)
 
     submit_security_code_button = browser.find_element_by_xpath(
-        read_xpath(bypass_suspicious_login.__name__, "submit_security_code_button")
+        read_xpath(bypass_suspicious_login.__name__,
+                   "submit_security_code_button")
     )
 
     (
@@ -162,88 +168,88 @@ def check_browser(browser, logfolder, logger, proxy_address):
     )
 
     # check connection status
-    try:
-        logger.info("-- Connection Checklist [1/3] (Internet Connection Status)")
-        browser.get("view-source:https://ip4.seeip.org/geoip")
-        pre = browser.find_element_by_tag_name("pre").text
-        current_ip_info = json.loads(pre)
-        if (
-            proxy_address is not None
-            and socket.gethostbyname(proxy_address) != current_ip_info["ip"]
-        ):
-            logger.warn("- Proxy is set, but it's not working properly")
-            logger.warn(
-                '- Expected Proxy IP is "{}", and the current IP is "{}"'.format(
-                    proxy_address, current_ip_info["ip"]
-                )
-            )
-            logger.warn("- Try again or disable the Proxy Address on your setup")
-            logger.warn("- Aborting connection...")
-            return False
-        else:
-            logger.info("- Internet Connection Status: ok")
-            logger.info(
-                '- Current IP is "{}" and it\'s from "{}/{}"'.format(
-                    current_ip_info["ip"],
-                    current_ip_info["country"],
-                    current_ip_info["country_code"],
-                )
-            )
-            update_activity(
-                browser,
-                action=None,
-                state="Internet connection is ok",
-                logfolder=logfolder,
-                logger=logger,
-            )
-    except Exception:
-        logger.warn("- Internet Connection Status: error")
-        update_activity(
-            browser,
-            action=None,
-            state="There is an issue with the internet connection",
-            logfolder=logfolder,
-            logger=logger,
-        )
-        return False
-
-    # check Instagram.com status
-    try:
-        logger.info("-- Connection Checklist [2/3] (Instagram Server Status)")
-        browser.get("https://isitdownorjust.me/instagram-com/")
-        sleep(2)
-        # collect isitdownorjust.me website information
-        website_status = browser.find_element_by_xpath(
-            read_xpath(login_user.__name__, "website_status")
-        )
-        response_time = browser.find_element_by_xpath(
-            read_xpath(login_user.__name__, "response_time")
-        )
-        response_code = browser.find_element_by_xpath(
-            read_xpath(login_user.__name__, "response_code")
-        )
-
-        logger.info("- Instagram WebSite Status: {} ".format(website_status.text))
-        logger.info("- Instagram Response Time: {} ".format(response_time.text))
-        logger.info("- Instagram Reponse Code: {}".format(response_code.text))
-        logger.info("- Instagram Server Status: ok")
-        update_activity(
-            browser,
-            action=None,
-            state="Instagram servers are running correctly",
-            logfolder=logfolder,
-            logger=logger,
-        )
-    except Exception:
-        logger.warn("- Instagram Server Status: error")
-        update_activity(
-            browser,
-            action=None,
-            state="Instagram server is down",
-            logfolder=logfolder,
-            logger=logger,
-        )
-        return False
+    # try:
+    #     logger.info("-- Connection Checklist [1/3] (Internet Connection Status)")
+    #     browser.get("view-source:https://ip4.seeip.org/geoip")
+    #     pre = browser.find_element_by_tag_name("pre").text
+    #     current_ip_info = json.loads(pre)
+    #     if (
+    #         proxy_address is not None
+    #         and socket.gethostbyname(proxy_address) != current_ip_info["ip"]
+    #     ):
+    #         logger.warn("- Proxy is set, but it's not working properly")
+    #         logger.warn(
+    #             '- Expected Proxy IP is "{}", and the current IP is "{}"'.format(
+    #                 proxy_address, current_ip_info["ip"]
+    #             )
+    #         )
+    #         logger.warn("- Try again or disable the Proxy Address on your setup")
+    #         logger.warn("- Aborting connection...")
+    #         return False
+    #     else:
+    #         logger.info("- Internet Connection Status: ok")
+    #         logger.info(
+    #             '- Current IP is "{}" and it\'s from "{}/{}"'.format(
+    #                 current_ip_info["ip"],
+    #                 current_ip_info["country"],
+    #                 current_ip_info["country_code"],
+    #             )
+    #         )
+    #         update_activity(
+    #             browser,
+    #             action=None,
+    #             state="Internet connection is ok",
+    #             logfolder=logfolder,
+    #             logger=logger,
+    #         )
+    # except Exception:
+    #     logger.warn("- Internet Connection Status: error")
+    #     update_activity(
+    #         browser,
+    #         action=None,
+    #         state="There is an issue with the internet connection",
+    #         logfolder=logfolder,
+    #         logger=logger,
+    #     )
+    #     return False
+    #
+    # # check Instagram.com status
+    # try:
+    #     logger.info("-- Connection Checklist [2/3] (Instagram Server Status)")
+    #     browser.get("https://isitdownorjust.me/instagram-com/")
+    #     sleep(2)
+    #     # collect isitdownorjust.me website information
+    #     website_status = browser.find_element_by_xpath(
+    #         read_xpath(login_user.__name__, "website_status")
+    #     )
+    #     response_time = browser.find_element_by_xpath(
+    #         read_xpath(login_user.__name__, "response_time")
+    #     )
+    #     response_code = browser.find_element_by_xpath(
+    #         read_xpath(login_user.__name__, "response_code")
+    #     )
+    #
+    #     logger.info("- Instagram WebSite Status: {} ".format(website_status.text))
+    #     logger.info("- Instagram Response Time: {} ".format(response_time.text))
+    #     logger.info("- Instagram Reponse Code: {}".format(response_code.text))
+    #     logger.info("- Instagram Server Status: ok")
+    #     update_activity(
+    #         browser,
+    #         action=None,
+    #         state="Instagram servers are running correctly",
+    #         logfolder=logfolder,
+    #         logger=logger,
+    #     )
+    # except Exception:
+    #     logger.warn("- Instagram Server Status: error")
+    #     update_activity(
+    #         browser,
+    #         action=None,
+    #         state="Instagram server is down",
+    #         logfolder=logfolder,
+    #         logger=logger,
+    #     )
+    #     return False
 
     # check if hide-selenium extension is running
     logger.info("-- Connection Checklist [3/3] (Hide Selenium Extension)")
@@ -307,7 +313,8 @@ def login_user(
     # so go create a new cookie..
     if cookie_loaded:
         print(
-            "Issue with cookie for user {}. Creating " "new cookie...".format(username)
+            "Issue with cookie for user {}. Creating " "new cookie...".format(
+                username)
         )
 
     # Check if the first div is 'Create an Account' or 'Log In'
@@ -448,7 +455,8 @@ def login_user(
                 logfolder=logfolder,
                 logger=logger,
             )
-            bypass_suspicious_login(browser, logger, logfolder, security_code_to_phone)
+            bypass_suspicious_login(
+                browser, logger, logfolder, security_code_to_phone)
         except NoSuchElementException:
             pass
 
@@ -476,7 +484,8 @@ def login_user(
     explicit_wait(browser, "PFL", [], logger, 5)
 
     # Check if user is logged-in (If there's two 'nav' elements)
-    nav = browser.find_elements_by_xpath(read_xpath(login_user.__name__, "nav"))
+    nav = browser.find_elements_by_xpath(
+        read_xpath(login_user.__name__, "nav"))
     if len(nav) == 2:
         # create cookie for username
         pickle.dump(
@@ -505,7 +514,8 @@ def dismiss_get_app_offer(browser, logger):
 
 def dismiss_notification_offer(browser, logger):
     """ Dismiss 'Turn on Notifications' offer on session start """
-    offer_elem_loc = read_xpath(dismiss_notification_offer.__name__, "offer_elem_loc")
+    offer_elem_loc = read_xpath(
+        dismiss_notification_offer.__name__, "offer_elem_loc")
     dismiss_elem_loc = read_xpath(
         dismiss_notification_offer.__name__, "dismiss_elem_loc"
     )
@@ -526,7 +536,8 @@ def dismiss_this_was_me(browser):
         this_was_me_button = browser.find_element_by_xpath(
             read_xpath(dismiss_this_was_me.__name__, "this_was_me_button")
         )
-        (ActionChains(browser).move_to_element(this_was_me_button).click().perform())
+        (ActionChains(browser).move_to_element(
+            this_was_me_button).click().perform())
         # update server calls
         update_activity(browser, state=None)
     except NoSuchElementException:
